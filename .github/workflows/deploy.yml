@@ -27,7 +27,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Install dependencies
@@ -36,9 +36,8 @@ jobs:
       - name: Build Astro with GitHub Pages environment
         run: npm run build
         env:
-          # If your repository is USERNAME/REPOSITORY (project site), set BASE_PATH to '/REPOSITORY/'
-          # For user/org site (USERNAME.github.io), keep BASE_PATH as '/'
-          BASE_PATH: ${{ github.repository_owner == github.event.repository.name && '/' || format('/{0}/', github.event.repository.name) }}
+          # User/org sites use the root path; project sites use '/REPOSITORY/'.
+          BASE_PATH: ${{ (github.repository_owner == github.event.repository.name || format('{0}.github.io', github.repository_owner) == github.event.repository.name) && '/' || format('/{0}/', github.event.repository.name) }}
           SITE: ${{ format('https://{0}.github.io', github.repository_owner) }}
 
       - name: Upload artifact
