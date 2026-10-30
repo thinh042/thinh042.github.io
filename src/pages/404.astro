@@ -1,0 +1,108 @@
+---
+/**
+ * 404.astro — Custom Not Found Page
+ * Liminal dreamcore void aesthetic
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { resolveUrl } from '../data/site';
+---
+
+<BaseLayout title="404 — Không gian vô định | Trần Vĩnh Thịnh" description="Trang bạn tìm kiếm không tồn tại trong hệ thống.">
+  <div class="not-found-container">
+    <div class="container not-found-content">
+      <div class="void-portal" aria-hidden="true">
+        <div class="void-core">404</div>
+        <div class="void-ring"></div>
+      </div>
+
+      <h1 class="void-title">Lạc vào không gian vô định</h1>
+      <p class="void-desc">
+        Tọa độ kỹ thuật số bạn vừa truy cập không tồn tại hoặc đã tan biến vào hư không số. Hãy quay trở về không gian thực nhé!
+      </p>
+
+      <div class="void-actions">
+        <a href={resolveUrl('/')} class="btn btn-primary">
+          <span>Trở về Trang chủ</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </a>
+        <a href={resolveUrl('/posts/')} class="btn btn-outline">
+          <span>Xem danh sách bài viết</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.5rem;
+    text-align: center;
+  }
+
+  .not-found-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 600px;
+  }
+
+  .void-portal {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+
+  .void-core {
+    font-size: 3.5rem;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    color: var(--accent-cyan);
+    text-shadow: 0 0 25px rgba(126, 232, 250, 0.6);
+  }
+
+  .void-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1.5px dashed rgba(143, 101, 226, 0.4);
+    animation: rotateVoid 20s linear infinite;
+  }
+
+  .void-title {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    margin-bottom: 1rem;
+  }
+
+  .void-desc {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .void-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  @keyframes rotateVoid {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>

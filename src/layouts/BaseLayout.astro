@@ -1,0 +1,130 @@
+---
+/**
+ * BaseLayout.astro
+ * Root layout containing global head, SEO, Dreamcore background,
+ * Header, MobileMenu, and Footer.
+ */
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import MobileMenu from '../components/MobileMenu.astro';
+import DreamcoreBackground from '../components/DreamcoreBackground.astro';
+import { siteConfig, resolveUrl } from '../data/site';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title = siteConfig.title,
+  description = siteConfig.description,
+  image = resolveUrl('/favicon.svg'),
+} = Astro.props;
+
+const currentPath = Astro.url.pathname;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://vinhthinh.github.io').toString();
+---
+
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href={resolveUrl('/favicon.svg')} />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO Meta Tags -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={siteConfig.name} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={image} />
+
+    <!-- Font Preconnections for optimum performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Persistent Dreamcore Canvas & Ethereal Grid Background -->
+    <DreamcoreBackground />
+
+    <!-- Header Navigation -->
+    <Header currentPath={currentPath} />
+
+    <!-- Mobile Drawer Menu -->
+    <MobileMenu currentPath={currentPath} />
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="main-content">
+      <slot />
+    </main>
+
+    <!-- Global Footer -->
+    <Footer />
+
+    <!-- Client Script: Intersection Observer for gentle scroll reveal -->
+    <script>
+      (() => {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          return;
+        }
+
+        const revealElements = document.querySelectorAll('.scroll-reveal');
+        if (revealElements.length === 0) return;
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-revealed');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+        );
+
+        revealElements.forEach((el) => observer.observe(el));
+      })();
+    </script>
+  </body>
+</html>
+
+<style>
+  .main-content {
+    flex: 1 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Scroll reveal animation helpers */
+  :global(.scroll-reveal) {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+
+  :global(.scroll-reveal.is-revealed) {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>

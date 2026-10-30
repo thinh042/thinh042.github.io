@@ -1,0 +1,252 @@
+---
+/**
+ * MobileMenu.astro
+ * Accessible full-screen / slide-in mobile navigation menu.
+ */
+import { siteConfig, resolveUrl } from '../data/site';
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+---
+
+<div id="mobile-menu-overlay" class="mobile-menu-overlay" aria-hidden="true">
+  <div class="mobile-menu-content glass-panel" role="dialog" aria-modal="true" aria-label="Menu điều hướng di động">
+    <div class="mobile-menu-header">
+      <div class="brand">
+        <span class="logo-symbol">◈</span>
+        <span class="logo-text">{siteConfig.shortName}</span>
+      </div>
+      <button type="button" id="mobile-menu-close" class="close-btn" aria-label="Đóng menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <nav class="mobile-nav">
+      <ul class="mobile-nav-list">
+        {siteConfig.nav.map((item) => {
+          const resolvedHref = resolveUrl(item.href);
+          const isHome = item.href === '/';
+          const isActive = isHome 
+            ? currentPath === '/' || currentPath === '' || currentPath === resolveUrl('/')
+            : currentPath.startsWith(resolvedHref);
+
+          return (
+            <li>
+              <a
+                href={resolvedHref}
+                class={`mobile-nav-link ${isActive ? 'active' : ''}`}
+              >
+                <span class="nav-number">0{siteConfig.nav.indexOf(item) + 1}</span>
+                <span class="nav-text">{item.label}</span>
+                {isActive && <span class="active-dot" aria-hidden="true"></span>}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+
+    <div class="mobile-menu-footer">
+      <div class="cyber-status">
+        <span class="status-pip"></span>
+        <span>{siteConfig.role}</span>
+      </div>
+      <div class="mobile-location">{siteConfig.location}</div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .mobile-menu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(6, 9, 19, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-normal), visibility var(--transition-normal);
+  }
+
+  .mobile-menu-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobile-menu-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 85%;
+    max-width: 360px;
+    height: 100%;
+    background: rgba(11, 16, 33, 0.95);
+    border-left: 1px solid var(--border-glow);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem;
+    transform: translateX(100%);
+    transition: transform var(--transition-normal);
+  }
+
+  .mobile-menu-overlay.is-open .mobile-menu-content {
+    transform: translateX(0);
+  }
+
+  .mobile-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .logo-symbol {
+    color: var(--accent-cyan);
+    font-size: 1.2rem;
+  }
+
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition-fast);
+  }
+
+  .close-btn:hover {
+    color: #ffffff;
+  }
+
+  .mobile-nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .mobile-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    border: 1px solid transparent;
+  }
+
+  .nav-number {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent-lavender);
+    opacity: 0.7;
+  }
+
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active {
+    color: #ffffff;
+    background: rgba(126, 232, 250, 0.08);
+    border-color: var(--border-glow);
+  }
+
+  .mobile-nav-link.active .nav-text {
+    color: var(--accent-cyan);
+    font-weight: 600;
+  }
+
+  .active-dot {
+    margin-left: auto;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--accent-cyan);
+    box-shadow: 0 0 8px var(--accent-cyan);
+  }
+
+  .mobile-menu-footer {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .cyber-status {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent-cyan);
+  }
+
+  .status-pip {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 6px #34d399;
+  }
+
+  .mobile-location {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+</style>
+
+<script>
+  (() => {
+    const overlay = document.getElementById('mobile-menu-overlay');
+    const closeBtn = document.getElementById('mobile-menu-close');
+    if (!overlay || !closeBtn) return;
+
+    const closeMenu = () => {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+
+    closeBtn.addEventListener('click', closeMenu);
+
+    // Close when clicking backdrop
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeMenu();
+    });
+
+    // Close on Escape key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('is-open')) {
+        closeMenu();
+      }
+    });
+
+    // Close when clicking any nav link
+    const links = overlay.querySelectorAll('a');
+    links.forEach((l) => l.addEventListener('click', closeMenu));
+  })();
+</script>

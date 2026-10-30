@@ -1,0 +1,262 @@
+---
+/**
+ * ProjectCard.astro
+ * Dreamcore Cyber Card for showcasing student & experimental projects.
+ */
+import type { Project } from '../data/projects';
+import { isPlaceholderUrl } from '../data/site';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+
+const statusClass = 
+  project.status === 'Completed' ? 'status-completed' :
+  project.status === 'In Progress' ? 'status-in-progress' : 'status-prototype';
+---
+
+<article class="project-card glass-panel">
+  <!-- Visual Header / Banner -->
+  <div class="card-visual">
+    <div class="visual-liminal-bg">
+      <span class="visual-category">{project.category}</span>
+      <div class="visual-geometry" aria-hidden="true">
+        <div class="geo-circle"></div>
+        <div class="geo-line"></div>
+      </div>
+    </div>
+    <div class="card-badges">
+      <span class={`badge-status ${statusClass}`}>{project.status}</span>
+      {project.isSample && (
+        <span class="badge-sample" title="Dự án mẫu minh họa cấu trúc. Hãy thay thế bằng đồ án thực tế của bạn!">
+          Sample Project
+        </span>
+      )}
+    </div>
+  </div>
+
+  <!-- Content Body -->
+  <div class="card-content">
+    <h3 class="project-title">{project.title}</h3>
+    <p class="project-desc">{project.description}</p>
+
+    <!-- Highlights if any -->
+    {project.highlights && project.highlights.length > 0 && (
+      <ul class="project-highlights">
+        {project.highlights.slice(0, 2).map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    )}
+
+    <!-- Tech Stack Tags -->
+    <div class="project-stack">
+      {project.stack.map((tech) => (
+        <span class="badge">{tech}</span>
+      ))}
+    </div>
+
+    <!-- Actions / Links -->
+    <div class="project-actions">
+      {project.repoUrl && !isPlaceholderUrl(project.repoUrl) ? (
+        <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" class="action-link link-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+          </svg>
+          <span>Repository</span>
+        </a>
+      ) : (
+        <span class="action-disabled" title="Placeholder Repo — Cập nhật trong src/data/projects.ts">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+          </svg>
+          <span>Repo (Placeholder)</span>
+        </span>
+      )}
+
+      {project.demoUrl ? (
+        <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" class="action-link link-accent">
+          <span>Live Demo ↗</span>
+        </a>
+      ) : null}
+    </div>
+  </div>
+</article>
+
+<style>
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+    border-radius: var(--radius-md);
+  }
+
+  .card-visual {
+    position: relative;
+    height: 140px;
+    background: linear-gradient(135deg, rgba(14, 20, 46, 0.9), rgba(20, 32, 68, 0.8));
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 1rem;
+    overflow: hidden;
+  }
+
+  .visual-liminal-bg {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 70% 30%, rgba(126, 232, 250, 0.15) 0%, rgba(143, 101, 226, 0.1) 40%, transparent 70%);
+  }
+
+  .visual-category {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--accent-cyan);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .visual-geometry {
+    position: absolute;
+    right: -20px;
+    bottom: -20px;
+    width: 120px;
+    height: 120px;
+    opacity: 0.25;
+  }
+
+  .geo-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 1px dashed var(--accent-cyan);
+  }
+
+  .geo-line {
+    position: absolute;
+    top: 50%;
+    left: -20%;
+    width: 140%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-lavender), transparent);
+    transform: rotate(-35deg);
+  }
+
+  .card-badges {
+    position: absolute;
+    bottom: 0.85rem;
+    left: 1rem;
+    right: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .badge-sample {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: var(--radius-sm);
+    background: rgba(148, 163, 184, 0.15);
+    color: var(--text-muted);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 1.5rem;
+  }
+
+  .project-title {
+    font-size: 1.25rem;
+    color: #ffffff;
+    margin-bottom: 0.65rem;
+    line-height: 1.35;
+  }
+
+  .project-desc {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    margin-bottom: 1.15rem;
+    line-height: 1.6;
+  }
+
+  .project-highlights {
+    list-style: none;
+    margin-bottom: 1.15rem;
+    padding-left: 0.25rem;
+  }
+
+  .project-highlights li {
+    position: relative;
+    padding-left: 1.25rem;
+    font-size: 0.84rem;
+    color: var(--text-dim);
+    margin-bottom: 0.35rem;
+  }
+
+  .project-highlights li::before {
+    content: "▹";
+    position: absolute;
+    left: 0;
+    color: var(--accent-cyan);
+  }
+
+  .project-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: auto;
+    margin-bottom: 1.5rem;
+  }
+
+  .project-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .link-primary {
+    color: var(--text-main);
+  }
+
+  .link-primary:hover {
+    color: var(--accent-cyan);
+  }
+
+  .link-accent {
+    color: var(--accent-cyan);
+    font-weight: 600;
+  }
+
+  .action-disabled {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.785rem;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+  }
+</style>

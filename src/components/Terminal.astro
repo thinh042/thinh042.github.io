@@ -1,0 +1,271 @@
+---
+/**
+ * Terminal.astro
+ * Futuristic Glassmorphic Mock Terminal showcasing student info and cyber vibe.
+ * Pure UI interaction with animated output and simulated commands (no real execution).
+ */
+import { siteConfig } from '../data/site';
+---
+
+<div class="terminal-window glass-panel">
+  <!-- Terminal Top Bar -->
+  <div class="terminal-bar">
+    <div class="terminal-controls">
+      <span class="dot dot-close"></span>
+      <span class="dot dot-minimize"></span>
+      <span class="dot dot-maximize"></span>
+    </div>
+    <div class="terminal-title">
+      <svg class="terminal-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="4 17 10 11 4 5"></polyline>
+        <line x1="12" y1="19" x2="20" y2="19"></line>
+      </svg>
+      <span>dreamcore-session // guest@vinhthinh.dev</span>
+    </div>
+    <div class="terminal-status">
+      <span class="pulse-indicator"></span>
+      <span>ONLINE</span>
+    </div>
+  </div>
+
+  <!-- Terminal Body -->
+  <div class="terminal-body" id="terminal-body">
+    <div class="term-line output-dim">Initializing dreamcore quantum kernel v2.6.0...</div>
+    <div class="term-line output-dim">Connected to node: [Ca Mau // Vietnam]</div>
+    <div class="term-line output-success">✓ Memory modules allocated: 1024MB</div>
+
+    <div class="term-line command-line">
+      <span class="term-prompt">$</span>
+      <span class="term-command">cat identity.json</span>
+    </div>
+
+    <div class="term-output json-output">
+      <span class="code-bracket">&#123;</span>
+      <div class="json-indent">
+        <span class="json-key">"name":</span> <span class="json-val">"{siteConfig.name}"</span>,<br/>
+        <span class="json-key">"role":</span> <span class="json-val">"{siteConfig.role}"</span>,<br/>
+        <span class="json-key">"location":</span> <span class="json-val">"{siteConfig.location}"</span>,<br/>
+        <span class="json-key">"passions":</span> [
+          <span class="json-val">"Web Engineering"</span>,
+          <span class="json-val">"Artificial Intelligence"</span>,
+          <span class="json-val">"Cyber Technology"</span>
+        ],<br/>
+        <span class="json-key">"status":</span> <span class="json-highlight">"Constantly Learning & Coding"</span>
+      </div>
+      <span class="code-bracket">&#125;</span>
+    </div>
+
+    <div class="term-line command-line mt-2">
+      <span class="term-prompt">$</span>
+      <span class="term-typing" id="interactive-cmd">ai --status</span>
+      <span class="term-cursor" aria-hidden="true">_</span>
+    </div>
+
+    <div class="term-output output-cyan mt-1" id="interactive-output">
+      ⚡ [NEURAL LINK]: Core active. System ready for exploration.
+    </div>
+  </div>
+</div>
+
+<style>
+  .terminal-window {
+    width: 100%;
+    max-width: 680px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: rgba(10, 15, 33, 0.82);
+    border: 1px solid rgba(126, 232, 250, 0.22);
+    box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(143, 101, 226, 0.15);
+  }
+
+  /* Top Bar */
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 1rem;
+    background: rgba(7, 10, 22, 0.9);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  }
+
+  .terminal-controls {
+    display: flex;
+    gap: 0.45rem;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .dot-close {
+    background: #ff5f56;
+  }
+
+  .dot-minimize {
+    background: #ffbd2e;
+  }
+
+  .dot-maximize {
+    background: #27c93f;
+  }
+
+  .terminal-title {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+
+  .terminal-icon {
+    color: var(--accent-cyan);
+  }
+
+  .terminal-status {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: #34d399;
+  }
+
+  .pulse-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #34d399;
+    box-shadow: 0 0 8px #34d399;
+    animation: pulseGlow 2s infinite;
+  }
+
+  /* Terminal Body */
+  .terminal-body {
+    padding: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--text-main);
+  }
+
+  .term-line {
+    margin-bottom: 0.35rem;
+  }
+
+  .mt-1 {
+    margin-top: 0.35rem;
+  }
+
+  .mt-2 {
+    margin-top: 0.85rem;
+  }
+
+  .output-dim {
+    color: var(--text-dim);
+    font-size: 0.785rem;
+  }
+
+  .output-success {
+    color: #34d399;
+    font-size: 0.8rem;
+  }
+
+  .output-cyan {
+    color: var(--accent-cyan);
+    padding-left: 1rem;
+    border-left: 2px solid var(--accent-cyan);
+    font-size: 0.825rem;
+  }
+
+  .command-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent-cyan);
+  }
+
+  .term-prompt {
+    color: var(--accent-lavender);
+    font-weight: 700;
+  }
+
+  .term-command {
+    color: #ffffff;
+  }
+
+  .term-cursor {
+    color: var(--accent-cyan);
+    animation: blink 1s step-end infinite;
+    font-weight: bold;
+  }
+
+  .json-output {
+    margin: 0.35rem 0;
+    padding-left: 0.5rem;
+    color: #e2e8f0;
+  }
+
+  .json-indent {
+    padding-left: 1.25rem;
+  }
+
+  .json-key {
+    color: var(--accent-lavender);
+  }
+
+  .json-val {
+    color: #93c5fd;
+  }
+
+  .json-highlight {
+    color: #7ee8fa;
+    text-shadow: 0 0 8px rgba(126, 232, 250, 0.4);
+  }
+
+  .code-bracket {
+    color: var(--text-dim);
+  }
+
+  @keyframes blink {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  // Simulated cyclic interactive prompts
+  (() => {
+    const cmdEl = document.getElementById('interactive-cmd');
+    const outEl = document.getElementById('interactive-output');
+    if (!cmdEl || !outEl) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    const scripts = [
+      { cmd: 'ai --status', res: '⚡ [NEURAL LINK]: Core active. System ready for exploration.' },
+      { cmd: 'git log -1 --oneline', res: '✨ [GIT]: 01f45d6 feat: initialize dreamcore portfolio ecosystem' },
+      { cmd: 'ping dreams.io', res: '📶 [LATENCY]: 1ms — Liminal tunnel established.' },
+      { cmd: 'astro check', res: '✓ [ASTRO]: 0 errors, 0 warnings. Ready for deploy!' },
+    ];
+
+    let index = 0;
+    const cycle = () => {
+      index = (index + 1) % scripts.length;
+      cmdEl.textContent = scripts[index].cmd;
+      outEl.textContent = scripts[index].res;
+    };
+
+    setInterval(cycle, 5000);
+  })();
+</script>

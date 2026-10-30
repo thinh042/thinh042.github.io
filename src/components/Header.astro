@@ -1,0 +1,263 @@
+---
+/**
+ * Header.astro
+ * Responsive sticky header with glassmorphism, exact 5 nav items,
+ * theme toggle, and mobile menu hamburger trigger.
+ */
+import { siteConfig, resolveUrl } from '../data/site';
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+---
+
+<header class="site-header">
+  <div class="container header-container">
+    <!-- Brand / Monogram -->
+    <a href={resolveUrl('/')} class="brand-link" aria-label={`${siteConfig.name} - Trang chủ`}>
+      <span class="brand-portal" aria-hidden="true">
+        <span class="portal-ring"></span>
+        <span class="portal-dot"></span>
+      </span>
+      <div class="brand-text">
+        <span class="brand-name">{siteConfig.shortName}</span>
+        <span class="brand-tag">/dev</span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="desktop-nav" aria-label="Điều hướng chính">
+      <ul class="nav-list">
+        {siteConfig.nav.map((item) => {
+          const resolvedHref = resolveUrl(item.href);
+          const isHome = item.href === '/';
+          // Match active route properly
+          const isActive = isHome
+            ? currentPath === '/' || currentPath === '' || currentPath === resolveUrl('/')
+            : currentPath.startsWith(resolvedHref);
+
+          return (
+            <li>
+              <a
+                href={resolvedHref}
+                class={`nav-link ${isActive ? 'nav-active' : ''}`}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <span class="nav-text">{item.label}</span>
+                {isActive && <span class="nav-indicator" aria-hidden="true"></span>}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <ThemeToggle />
+
+      <!-- Mobile Hamburger Button -->
+      <button
+        type="button"
+        id="mobile-menu-toggle"
+        class="mobile-toggle-btn"
+        aria-label="Mở menu điều hướng"
+        aria-controls="mobile-menu-overlay"
+      >
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background: rgba(6, 9, 19, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background var(--transition-normal), border-color var(--transition-normal);
+  }
+
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+  }
+
+  /* Brand Portal */
+  .brand-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .brand-portal {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .portal-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(126, 232, 250, 0.4);
+    animation: pulseRing 3s ease-in-out infinite alternate;
+  }
+
+  .portal-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 0 10px #7ee8fa;
+  }
+
+  .brand-text {
+    display: flex;
+    align-items: baseline;
+    gap: 0.2rem;
+  }
+
+  .brand-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .brand-tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent-lavender);
+  }
+
+  /* Desktop Nav */
+  .desktop-nav {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .desktop-nav {
+      display: block;
+    }
+  }
+
+  .nav-list {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .nav-link {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 0.9rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 0.925rem;
+    font-weight: 500;
+    transition: color var(--transition-fast), background var(--transition-fast);
+  }
+
+  .nav-link:hover {
+    color: #ffffff;
+    background: rgba(126, 232, 250, 0.05);
+  }
+
+  .nav-link.nav-active {
+    color: var(--accent-cyan);
+    font-weight: 600;
+  }
+
+  .nav-indicator {
+    position: absolute;
+    bottom: -2px;
+    width: 16px;
+    height: 2px;
+    border-radius: var(--radius-full);
+    background: var(--accent-cyan);
+    box-shadow: 0 0 8px var(--accent-cyan);
+  }
+
+  /* Actions & Mobile Trigger */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .mobile-toggle-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 38px;
+    height: 38px;
+    padding: 8px;
+    background: rgba(14, 19, 41, 0.7);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  @media (min-width: 768px) {
+    .mobile-toggle-btn {
+      display: none;
+    }
+  }
+
+  .hamburger-bar {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--text-main);
+    border-radius: 2px;
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+  }
+
+  @keyframes pulseRing {
+    0% {
+      transform: scale(0.92);
+      opacity: 0.7;
+    }
+    100% {
+      transform: scale(1.08);
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+    const overlay = document.getElementById('mobile-menu-overlay');
+    if (!toggleBtn || !overlay) return;
+
+    toggleBtn.addEventListener('click', () => {
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    });
+  })();
+</script>

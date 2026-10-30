@@ -1,0 +1,34 @@
+---
+/**
+ * posts/[...slug].astro — Individual Blog Post Route
+ * Uses Astro Content Collections + render()
+ */
+import { getCollection, render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => {
+    return import.meta.env.PROD ? data.draft !== true : true;
+  });
+
+  return posts.map((post) => {
+    // Ensure clean slug without .md extension
+    const cleanSlug = post.id.replace(/\.md$/, '');
+    return {
+      params: { slug: cleanSlug },
+      props: { post },
+    };
+  });
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+
+// Approximate reading time
+const wordCount = post.body ? post.body.split(/\s+/).length : 500;
+const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+---
+
+<PostLayout frontmatter={post.data} headings={headings} readingTime={readingTime}>
+  <Content />
+</PostLayout>

@@ -1,0 +1,242 @@
+---
+/**
+ * AIOrb.astro
+ * Futuristic ethereal AI Orb with 3D orbital rings, pulsating neural core,
+ * and floating data nodes.
+ */
+interface Props {
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const { size = 'md' } = Astro.props;
+---
+
+<div class={`orb-container orb-${size}`} aria-hidden="true">
+  <!-- Outer Glow Halo -->
+  <div class="orb-halo"></div>
+
+  <!-- 3D Orbital Rings -->
+  <div class="ring ring-1">
+    <div class="orbiting-node node-1"></div>
+  </div>
+  <div class="ring ring-2">
+    <div class="orbiting-node node-2"></div>
+  </div>
+  <div class="ring ring-3">
+    <div class="orbiting-node node-3"></div>
+  </div>
+
+  <!-- Inner Spheres -->
+  <div class="orb-core">
+    <div class="orb-inner-haze"></div>
+    <div class="orb-nucleus"></div>
+  </div>
+
+  <!-- Digital Coordinate Beacon -->
+  <div class="orb-coordinates">
+    <span>SYSTEM::ACTIVE</span>
+    <span>44.20.NODE // DC-AI</span>
+  </div>
+</div>
+
+<style>
+  .orb-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    perspective: 1000px;
+  }
+
+  .orb-lg {
+    width: 320px;
+    height: 320px;
+  }
+
+  .orb-md {
+    width: 240px;
+    height: 240px;
+  }
+
+  .orb-sm {
+    width: 140px;
+    height: 140px;
+  }
+
+  /* Pulsating Halo */
+  .orb-halo {
+    position: absolute;
+    inset: 10%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(126, 232, 250, 0.35) 0%, rgba(143, 101, 226, 0.25) 45%, rgba(6, 9, 19, 0) 70%);
+    filter: blur(28px);
+    animation: haloPulse 6s ease-in-out infinite alternate;
+  }
+
+  /* Central Orb Nucleus */
+  .orb-core {
+    position: relative;
+    width: 48%;
+    height: 48%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffffff 0%, #7ee8fa 25%, #8f65e2 65%, #0d1329 100%);
+    box-shadow: 
+      0 0 35px rgba(126, 232, 250, 0.6),
+      0 0 60px rgba(143, 101, 226, 0.35),
+      inset 0 0 20px rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: coreFloat 7s ease-in-out infinite alternate;
+  }
+
+  .orb-inner-haze {
+    position: absolute;
+    inset: -15%;
+    border-radius: 50%;
+    border: 1px dashed rgba(126, 232, 250, 0.35);
+    animation: spinClockwise 20s linear infinite;
+  }
+
+  .orb-nucleus {
+    width: 22%;
+    height: 22%;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 0 16px #ffffff, 0 0 30px #7ee8fa;
+  }
+
+  /* Orbital 3D Rings */
+  .ring {
+    position: absolute;
+    inset: 4%;
+    border-radius: 50%;
+    border: 1.5px solid rgba(126, 232, 250, 0.25);
+    transform-style: preserve-3d;
+  }
+
+  .ring-1 {
+    border-color: rgba(126, 232, 250, 0.4);
+    transform: rotateX(65deg) rotateY(15deg);
+    animation: ringSpin1 14s linear infinite;
+  }
+
+  .ring-2 {
+    border-color: rgba(184, 169, 232, 0.35);
+    transform: rotateX(30deg) rotateY(60deg);
+    animation: ringSpin2 18s linear infinite reverse;
+  }
+
+  .ring-3 {
+    border-color: rgba(56, 189, 248, 0.3);
+    transform: rotateX(75deg) rotateZ(45deg);
+    animation: ringSpin3 22s linear infinite;
+  }
+
+  /* Orbiting Nodes */
+  .orbiting-node {
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 0 10px #7ee8fa, 0 0 18px #8f65e2;
+  }
+
+  .node-1 {
+    top: 50%;
+    left: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  .node-2 {
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #7ee8fa;
+  }
+
+  .node-3 {
+    bottom: 15%;
+    right: 15%;
+    background: #b8a9e8;
+  }
+
+  /* Floating Telemetry Coordinates */
+  .orb-coordinates {
+    position: absolute;
+    bottom: -15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    color: var(--accent-cyan);
+    opacity: 0.8;
+  }
+
+  @keyframes haloPulse {
+    0% {
+      transform: scale(0.9);
+      opacity: 0.4;
+    }
+    100% {
+      transform: scale(1.15);
+      opacity: 0.75;
+    }
+  }
+
+  @keyframes coreFloat {
+    0% {
+      transform: translateY(-4px) scale(0.98);
+    }
+    100% {
+      transform: translateY(6px) scale(1.02);
+    }
+  }
+
+  @keyframes spinClockwise {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes ringSpin1 {
+    0% {
+      transform: rotateX(65deg) rotateY(15deg) rotateZ(0deg);
+    }
+    100% {
+      transform: rotateX(65deg) rotateY(15deg) rotateZ(360deg);
+    }
+  }
+
+  @keyframes ringSpin2 {
+    0% {
+      transform: rotateX(30deg) rotateY(60deg) rotateZ(0deg);
+    }
+    100% {
+      transform: rotateX(30deg) rotateY(60deg) rotateZ(360deg);
+    }
+  }
+
+  @keyframes ringSpin3 {
+    0% {
+      transform: rotateX(75deg) rotateZ(45deg) rotateY(0deg);
+    }
+    100% {
+      transform: rotateX(75deg) rotateZ(45deg) rotateY(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orb-halo, .orb-core, .orb-inner-haze, .ring-1, .ring-2, .ring-3 {
+      animation: none !important;
+    }
+  }
+</style>

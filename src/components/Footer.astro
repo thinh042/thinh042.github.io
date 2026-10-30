@@ -1,0 +1,305 @@
+---
+/**
+ * Footer.astro
+ * Dreamcore Cyber Footer with system status, quick navigation,
+ * safe social handles, and back-to-top button.
+ */
+import { siteConfig, resolveUrl, isPlaceholderUrl } from '../data/site';
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="footer-glow" aria-hidden="true"></div>
+
+  <div class="container footer-container">
+    <!-- Top Footer Grid -->
+    <div class="footer-grid">
+      <!-- Col 1: Identity & Dreamspace Note -->
+      <div class="footer-col footer-about">
+        <div class="footer-brand">
+          <span class="brand-glyph">◈</span>
+          <span class="brand-title">{siteConfig.name}</span>
+        </div>
+        <p class="footer-tagline">
+          {siteConfig.subtitle}
+        </p>
+        <div class="footer-badge">
+          <span class="live-dot"></span>
+          <span>HOSTED ON GITHUB PAGES</span>
+        </div>
+      </div>
+
+      <!-- Col 2: Navigation -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Khám phá</h4>
+        <ul class="footer-links">
+          {siteConfig.nav.map((item) => (
+            <li>
+              <a href={resolveUrl(item.href)}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Col 3: Technology Stack -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Kiến trúc</h4>
+        <ul class="footer-tech-list">
+          <li><span>Framework:</span> <strong>Astro SSG</strong></li>
+          <li><span>Styling:</span> <strong>Modern CSS</strong></li>
+          <li><span>Blog:</span> <strong>Markdown + Git</strong></li>
+          <li><span>Vibe:</span> <strong>Dreamcore × AI</strong></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Connect & Placeholder Notice -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Kết nối</h4>
+        <div class="social-links">
+          {isPlaceholderUrl(siteConfig.socials.github) ? (
+            <span class="social-placeholder" title="Placeholder - Thay link thật trong src/data/site.ts">
+              GitHub (Placeholder)
+            </span>
+          ) : (
+            <a href={siteConfig.socials.github} target="_blank" rel="noopener noreferrer">
+              GitHub ↗
+            </a>
+          )}
+
+          {isPlaceholderUrl(siteConfig.socials.linkedin) ? (
+            <span class="social-placeholder" title="Placeholder - Thay link thật trong src/data/site.ts">
+              LinkedIn (Placeholder)
+            </span>
+          ) : (
+            <a href={siteConfig.socials.linkedin} target="_blank" rel="noopener noreferrer">
+              LinkedIn ↗
+            </a>
+          )}
+
+          <a href={resolveUrl('/contact/')} class="contact-cta-link">
+            Trang liên hệ →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+      <div class="copyright">
+        © {currentYear} {siteConfig.name}. Thiết kế theo trường phái Dreamcore & Cybernetic.
+      </div>
+      
+      <!-- Back to top trigger -->
+      <button type="button" id="back-to-top" class="back-to-top-btn" aria-label="Cuộn lên đầu trang">
+        <span>Lên đầu trang</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    margin-top: auto;
+    padding-top: 4rem;
+    padding-bottom: 2.5rem;
+    background: linear-gradient(to top, rgba(4, 6, 14, 0.95), rgba(7, 10, 22, 0.65));
+    border-top: 1px solid var(--border-subtle);
+    overflow: hidden;
+  }
+
+  .footer-glow {
+    position: absolute;
+    top: 0;
+    left: 25%;
+    width: 50%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-violet), transparent);
+    box-shadow: 0 0 20px var(--accent-cyan);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    margin-bottom: 3.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .footer-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer-grid {
+      grid-template-columns: 1.8fr 1fr 1.2fr 1fr;
+    }
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+  }
+
+  .brand-glyph {
+    color: var(--accent-cyan);
+  }
+
+  .footer-tagline {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    max-width: 320px;
+    margin-bottom: 1.25rem;
+    line-height: 1.6;
+  }
+
+  .footer-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.75rem;
+    background: rgba(14, 19, 41, 0.6);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+  }
+
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #34d399;
+    box-shadow: 0 0 6px #34d399;
+  }
+
+  .footer-heading {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: var(--font-mono);
+  }
+
+  .footer-links,
+  .footer-tech-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .footer-links a {
+    color: var(--text-muted);
+    font-size: 0.925rem;
+    transition: color var(--transition-fast), padding-left var(--transition-fast);
+  }
+
+  .footer-links a:hover {
+    color: var(--accent-cyan);
+    padding-left: 4px;
+  }
+
+  .footer-tech-list li {
+    font-size: 0.875rem;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px dashed rgba(148, 163, 184, 0.08);
+  }
+
+  .footer-tech-list strong {
+    color: var(--accent-lavender);
+    font-weight: 500;
+  }
+
+  .social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .social-placeholder {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .social-links a {
+    color: var(--text-muted);
+    font-size: 0.925rem;
+  }
+
+  .social-links a:hover {
+    color: var(--accent-cyan);
+  }
+
+  .contact-cta-link {
+    color: var(--accent-cyan) !important;
+    font-weight: 600;
+    margin-top: 0.35rem;
+  }
+
+  /* Bottom Bar */
+  .footer-bottom {
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+
+  @media (min-width: 640px) {
+    .footer-bottom {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  .back-to-top-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .back-to-top-btn:hover {
+    color: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(126, 232, 250, 0.2);
+  }
+</style>
+
+<script>
+  (() => {
+    const btn = document.getElementById('back-to-top');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+</script>

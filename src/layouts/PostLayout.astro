@@ -1,0 +1,440 @@
+---
+/**
+ * PostLayout.astro
+ * Specialized layout for Markdown post reading experience.
+ * Features:
+ * - Top reading progress bar
+ * - Accessible breadcrumb
+ * - Reading time and date formatting
+ * - Interactive copy code buttons
+ * - Table of contents (if headings exist)
+ * - Navigation back to posts
+ */
+import BaseLayout from './BaseLayout.astro';
+import { resolveUrl } from '../data/site';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description: string;
+    pubDate: Date;
+    category: string;
+    tags: string[];
+    author?: string;
+  };
+  headings?: { depth: number; slug: string; text: string }[];
+  readingTime?: number;
+}
+
+const { frontmatter, headings = [], readingTime = 3 } = Astro.props;
+
+const formattedDate = new Intl.DateTimeFormat('vi-VN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(new Date(frontmatter.pubDate));
+
+const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+<BaseLayout title={`${frontmatter.title} — Blog Trần Vĩnh Thịnh`} description={frontmatter.description}>
+  <!-- Top Reading Progress Indicator -->
+  <div id="reading-progress-bar" class="reading-progress-bar" aria-hidden="true"></div>
+
+  <article class="post-detail-container">
+    <div class="container">
+      <!-- Breadcrumb Navigation -->
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href={resolveUrl('/')}>Home</a>
+        <span class="breadcrumb-sep">/</span>
+        <a href={resolveUrl('/posts/')}>Posts</a>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current" aria-current="page">{frontmatter.title}</span>
+      </nav>
+
+      <!-- Article Header -->
+      <header class="article-header glass-panel">
+        <div class="article-meta">
+          <span class="badge badge-lavender">{frontmatter.category}</span>
+          <span class="meta-sep">•</span>
+          <time datetime={new Date(frontmatter.pubDate).toISOString()} class="article-date">
+            {formattedDate}
+          </time>
+          <span class="meta-sep">•</span>
+          <span class="article-read-time">{readingTime} phút đọc</span>
+        </div>
+
+        <h1 class="article-title">{frontmatter.title}</h1>
+        <p class="article-desc">{frontmatter.description}</p>
+
+        <div class="article-tags">
+          {frontmatter.tags.map((tag) => (
+            <span class="badge">#{tag}</span>
+          ))}
+        </div>
+      </header>
+
+      <!-- Main Layout Grid: TOC + Content -->
+      <div class="article-grid">
+        <!-- Optional Sticky Table of Contents -->
+        {tocHeadings.length > 0 && (
+          <aside class="article-toc-wrapper">
+            <div class="article-toc glass-panel">
+              <h4 class="toc-title">Mục lục nội dung</h4>
+              <nav aria-label="Mục lục bài viết">
+                <ul class="toc-list">
+                  {tocHeadings.map((h) => (
+                    <li class={`toc-item toc-depth-${h.depth}`}>
+                      <a href={`#${h.slug}`}>{h.text}</a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+          </aside>
+        )}
+
+        <!-- Markdown Content -->
+        <div class="markdown-body glass-panel">
+          <slot />
+        </div>
+      </div>
+
+      <!-- Article Footer / Navigation -->
+      <div class="article-footer-nav">
+        <a href={resolveUrl('/posts/')} class="btn btn-outline">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Quay lại danh sách bài viết</span>
+        </a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  /* Reading Progress Bar */
+  .reading-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-violet));
+    box-shadow: 0 0 10px var(--accent-cyan);
+    z-index: 1000;
+    transition: width 0.1s ease-out;
+  }
+
+  .post-detail-container {
+    padding-top: 2rem;
+    padding-bottom: 5rem;
+  }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.825rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--accent-cyan);
+  }
+
+  .breadcrumb-sep {
+    color: var(--text-dim);
+  }
+
+  .breadcrumb-current {
+    color: var(--accent-cyan);
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Article Header */
+  .article-header {
+    padding: 2.5rem 2rem;
+    margin-bottom: 2.5rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-sep {
+    opacity: 0.4;
+  }
+
+  .article-title {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    margin-bottom: 1rem;
+    color: #ffffff;
+    line-height: 1.3;
+  }
+
+  .article-desc {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    max-width: 800px;
+  }
+
+  .article-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  /* Grid Layout: TOC + Content */
+  .article-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 1024px) {
+    .article-grid {
+      grid-template-columns: 280px 1fr;
+      align-items: start;
+    }
+  }
+
+  /* Table of Contents */
+  .article-toc-wrapper {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .article-toc-wrapper {
+      display: block;
+      position: sticky;
+      top: 90px;
+    }
+  }
+
+  .article-toc {
+    padding: 1.25rem;
+    border-radius: var(--radius-md);
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+
+  .toc-title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+    letter-spacing: 0.08em;
+    color: var(--accent-cyan);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .toc-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .toc-item a {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: color var(--transition-fast);
+    display: block;
+    line-height: 1.4;
+  }
+
+  .toc-item a:hover {
+    color: var(--accent-cyan);
+  }
+
+  .toc-depth-3 {
+    padding-left: 0.85rem;
+    font-size: 0.8rem;
+  }
+
+  /* Markdown Body Typography */
+  .markdown-body {
+    padding: 2.25rem 1.75rem;
+    border-radius: var(--radius-lg);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #cbd5e1;
+  }
+
+  @media (min-width: 768px) {
+    .markdown-body {
+      padding: 3rem 2.75rem;
+    }
+  }
+
+  .markdown-body :global(h2) {
+    font-size: 1.75rem;
+    color: #ffffff;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .markdown-body :global(h3) {
+    font-size: 1.35rem;
+    color: #ffffff;
+    margin-top: 2rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .markdown-body :global(p) {
+    margin-bottom: 1.35rem;
+    color: #cbd5e1;
+  }
+
+  .markdown-body :global(ul),
+  .markdown-body :global(ol) {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .markdown-body :global(li) {
+    margin-bottom: 0.5rem;
+    color: #cbd5e1;
+  }
+
+  .markdown-body :global(blockquote) {
+    margin: 1.75rem 0;
+    padding: 1rem 1.5rem;
+    background: rgba(143, 101, 226, 0.08);
+    border-left: 3px solid var(--accent-violet);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    color: var(--accent-mist);
+    font-style: italic;
+  }
+
+  .markdown-body :global(hr) {
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+    margin: 2.5rem 0;
+  }
+
+  .markdown-body :global(pre) {
+    position: relative;
+    background: #090e1f !important;
+    border: 1px solid rgba(126, 232, 250, 0.18) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 1.25rem 1.25rem !important;
+    margin: 1.5rem 0 !important;
+    overflow-x: auto;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .markdown-body :global(code:not(pre code)) {
+    background: rgba(126, 232, 250, 0.1);
+    color: var(--accent-cyan);
+    padding: 0.2rem 0.45rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875em;
+    font-family: var(--font-mono);
+  }
+
+  /* Copy Code Button Styling */
+  :global(.copy-code-btn) {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+    background: rgba(14, 19, 41, 0.8);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  :global(.copy-code-btn:hover) {
+    color: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+  }
+
+  .article-footer-nav {
+    margin-top: 3.5rem;
+    display: flex;
+    justify-content: center;
+  }
+</style>
+
+<script>
+  (() => {
+    // 1. Reading Progress Bar
+    const progressBar = document.getElementById('reading-progress-bar');
+    if (progressBar) {
+      window.addEventListener(
+        'scroll',
+        () => {
+          const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+          if (totalHeight <= 0) return;
+          const progress = (window.scrollY / totalHeight) * 100;
+          progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+        },
+        { passive: true }
+      );
+    }
+
+    // 2. Insert Copy Button into all code blocks
+    const preBlocks = document.querySelectorAll('.markdown-body pre');
+    preBlocks.forEach((pre) => {
+      // Wrapper needs relative positioning
+      const container = pre as HTMLElement;
+      container.style.position = 'relative';
+
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'copy-code-btn';
+      copyBtn.setAttribute('type', 'button');
+      copyBtn.setAttribute('aria-label', 'Sao chép mã nguồn');
+      copyBtn.textContent = 'Copy';
+
+      copyBtn.addEventListener('click', async () => {
+        const code = pre.querySelector('code');
+        const textToCopy = (code as HTMLElement)?.innerText || (pre as HTMLElement).innerText || pre.textContent || '';
+
+        try {
+          await navigator.clipboard.writeText(textToCopy);
+          copyBtn.textContent = 'Copied!';
+          copyBtn.style.color = '#34d399';
+          setTimeout(() => {
+            copyBtn.textContent = 'Copy';
+            copyBtn.style.color = '';
+          }, 2000);
+        } catch (err) {
+          console.error('Không thể sao chép code: ', err);
+        }
+      });
+
+      pre.appendChild(copyBtn);
+    });
+  })();
+</script>

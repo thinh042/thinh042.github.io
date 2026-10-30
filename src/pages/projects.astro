@@ -1,0 +1,193 @@
+---
+/**
+ * projects.astro — Projects Page (/projects/)
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { projects } from '../data/projects';
+
+const categories = ['All', 'Web', 'AI', 'School Project', 'Experiment'];
+---
+
+<BaseLayout
+  title="Projects — Trần Vĩnh Thịnh"
+  description="Danh sách các dự án phần mềm, bài tập lớn và thử nghiệm công nghệ của Trần Vĩnh Thịnh."
+>
+  <div class="projects-page-container">
+    <div class="container">
+      <!-- Page Header -->
+      <header class="page-header scroll-reveal">
+        <span class="section-label">// DIRECTORY_PROJECTS</span>
+        <h1 class="page-title">Things I've been building</h1>
+        <p class="page-desc">
+          Bộ sưu tập các dự án học phần, ứng dụng web và thử nghiệm AI mà mình đã xây dựng. Mỗi sản phẩm là một cột mốc trong quá trình nâng cao năng lực lập trình.
+        </p>
+
+        <!-- Category Filter Buttons -->
+        <div class="filter-bar" role="toolbar" aria-label="Bộ lọc chuyên mục dự án">
+          {categories.map((cat, idx) => (
+            <button
+              type="button"
+              class={`filter-btn ${idx === 0 ? 'active' : ''}`}
+              data-filter={cat}
+              aria-pressed={idx === 0 ? 'true' : 'false'}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </header>
+
+      <!-- Projects Grid -->
+      <div class="projects-grid" id="projects-grid">
+        {projects.map((project) => (
+          <div class="project-item" data-category={project.category}>
+            <ProjectCard project={project} />
+          </div>
+        ))}
+      </div>
+
+      <!-- Empty State -->
+      <div id="no-projects-msg" class="empty-state glass-panel" style="display: none;">
+        <div class="empty-icon">◈</div>
+        <h3>Không tìm thấy dự án nào</h3>
+        <p>Hiện chưa có dự án nào trong phân loại này. Hãy chọn mục khác nhé!</p>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .projects-page-container {
+    padding-top: 3.5rem;
+    padding-bottom: 6rem;
+  }
+
+  .page-header {
+    margin-bottom: 3rem;
+  }
+
+  .page-title {
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    margin-bottom: 0.85rem;
+  }
+
+  .page-desc {
+    max-width: 680px;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+
+  /* Filter Bar */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+  }
+
+  .filter-btn {
+    background: rgba(14, 19, 41, 0.7);
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+    padding: 0.5rem 1.15rem;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .filter-btn:hover {
+    color: var(--text-main);
+    border-color: var(--border-glow);
+  }
+
+  .filter-btn.active {
+    background: rgba(126, 232, 250, 0.12);
+    color: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 12px rgba(126, 232, 250, 0.25);
+  }
+
+  /* Grid */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .projects-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .projects-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .project-item {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  /* Empty State */
+  .empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    border-radius: var(--radius-md);
+    margin-top: 2rem;
+  }
+
+  .empty-icon {
+    font-size: 2.5rem;
+    color: var(--accent-cyan);
+    margin-bottom: 1rem;
+  }
+
+  .empty-state h3 {
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-state p {
+    color: var(--text-muted);
+  }
+</style>
+
+<script>
+  (() => {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const items = document.querySelectorAll<HTMLElement>('.project-item');
+    const emptyMsg = document.getElementById('no-projects-msg');
+
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach((b) => {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+
+        const filter = btn.getAttribute('data-filter');
+        let visibleCount = 0;
+
+        items.forEach((item) => {
+          const category = item.getAttribute('data-category');
+          if (filter === 'All' || category === filter) {
+            item.style.display = 'block';
+            visibleCount++;
+          } else {
+            item.style.display = 'none';
+          }
+        });
+
+        if (emptyMsg) {
+          emptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+      });
+    });
+  })();
+</script>

@@ -1,0 +1,479 @@
+---
+/**
+ * about.astro — About Page (/about/)
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig, resolveUrl } from '../data/site';
+
+const levelBadgeClass = (level: string) => {
+  switch (level) {
+    case 'Familiar':
+      return 'badge-status status-completed';
+    case 'Learning':
+      return 'badge-status status-in-progress';
+    case 'Exploring':
+      return 'badge-status status-prototype';
+    default:
+      return 'badge';
+  }
+};
+---
+
+<BaseLayout
+  title="About — Trần Vĩnh Thịnh"
+  description="Giới thiệu về Trần Vĩnh Thịnh, hành trình học tập, kỹ năng công nghệ và định hướng phát triển."
+>
+  <div class="about-page-container">
+    <div class="container">
+      <!-- 1. HERO / PROFILE CARD SECTION -->
+      <section class="about-hero scroll-reveal">
+        <div class="profile-card glass-panel">
+          <div class="profile-avatar-wrapper">
+            <div class="avatar-monogram" aria-label="Avatar Vĩnh Thịnh">
+              <span>VT</span>
+              <div class="avatar-orbit" aria-hidden="true"></div>
+            </div>
+            <div class="status-chip">
+              <span class="pip"></span>
+              <span>Open to learning & internships</span>
+            </div>
+          </div>
+
+          <div class="profile-info">
+            <span class="section-label">// IDENTIFICATION</span>
+            <h1 class="profile-name">{siteConfig.name}</h1>
+            <p class="profile-role">{siteConfig.role} · {siteConfig.location}</p>
+
+            <div class="profile-bio-paragraphs">
+              {siteConfig.aboutBio.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </div>
+
+            <div class="profile-quick-actions">
+              <a href={resolveUrl('/projects/')} class="btn btn-primary">
+                Xem dự án đã làm →
+              </a>
+              <a href={resolveUrl('/contact/')} class="btn btn-outline">
+                Gửi tin nhắn liên hệ
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. SKILLS SHOWCASE -->
+      <section class="about-section scroll-reveal">
+        <div class="section-header">
+          <span class="section-label">// TECHNICAL_STACK</span>
+          <h2 class="section-title">Kỹ năng & Mức độ tiếp cận</h2>
+          <p class="section-desc">
+            Đánh giá trung thực dựa trên trải nghiệm thực tế. Sử dụng phân loại <em>Learning (Đang học)</em>, <em>Familiar (Quen thuộc)</em> và <em>Exploring (Đang khám phá)</em>.
+          </p>
+        </div>
+
+        <div class="skills-categories-grid">
+          {siteConfig.skills.map((category) => (
+            <div class="skill-category-card glass-panel">
+              <div class="category-header">
+                <span class="category-icon-glyph">◈</span>
+                <h3 class="category-title">{category.title}</h3>
+              </div>
+              <ul class="skill-list">
+                {category.items.map((skill) => (
+                  <li class="skill-item">
+                    <div class="skill-main">
+                      <span class="skill-name">{skill.name}</span>
+                      <span class={levelBadgeClass(skill.level)}>{skill.level}</span>
+                    </div>
+                    {skill.note && <span class="skill-note">{skill.note}</span>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- 3. CURRENTLY EXPLORING & GOALS -->
+      <section class="about-section scroll-reveal">
+        <div class="twin-cards-grid">
+          <!-- Currently Exploring -->
+          <div class="feature-card glass-panel">
+            <div class="feature-card-header">
+              <span class="feature-icon">⚡</span>
+              <h3>Đang nghiên cứu sâu</h3>
+            </div>
+            <ul class="bullet-list">
+              {siteConfig.currentlyExploring.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+
+          <!-- My Goals -->
+          <div class="feature-card glass-panel">
+            <div class="feature-card-header">
+              <span class="feature-icon">🎯</span>
+              <h3>Mục tiêu phát triển</h3>
+            </div>
+            <ul class="bullet-list">
+              {siteConfig.goals.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. TIMELINE -->
+      <section class="about-section scroll-reveal">
+        <div class="section-header">
+          <span class="section-label">// MILESTONES</span>
+          <h2 class="section-title">Hành trình học tập & phát triển</h2>
+          <p class="section-desc">
+            Các mốc thời gian đánh dấu sự chuyển mình từ người mới bắt đầu đến người làm chủ các công nghệ cơ bản.
+          </p>
+        </div>
+
+        <div class="timeline-container">
+          {siteConfig.timeline.map((event, index) => (
+            <div class="timeline-row">
+              <div class="timeline-meta">
+                <span class="timeline-year">{event.year}</span>
+              </div>
+              <div class="timeline-point">
+                <span class="point-dot"></span>
+                {index !== siteConfig.timeline.length - 1 && <span class="point-line"></span>}
+              </div>
+              <div class="timeline-card glass-panel">
+                <h3 class="event-title">{event.title}</h3>
+                <span class="event-org">{event.organization}</span>
+                <p class="event-desc">{event.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-page-container {
+    padding-top: 3.5rem;
+    padding-bottom: 6rem;
+  }
+
+  .about-section {
+    margin-top: 5rem;
+  }
+
+  /* Profile Card */
+  .profile-card {
+    padding: 2.5rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    border-radius: var(--radius-lg);
+  }
+
+  @media (min-width: 840px) {
+    .profile-card {
+      grid-template-columns: 240px 1fr;
+      padding: 3.5rem 3rem;
+    }
+  }
+
+  .profile-avatar-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .avatar-monogram {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #1e295d, #0b1021);
+    border: 2px solid var(--accent-cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(126, 232, 250, 0.35);
+  }
+
+  .avatar-monogram span {
+    font-size: 2.75rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.05em;
+    background: linear-gradient(135deg, #ffffff, var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .avatar-orbit {
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    border: 1px dashed rgba(184, 169, 232, 0.4);
+    animation: spinClockwise 25s linear infinite;
+  }
+
+  .status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: #34d399;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-full);
+    background: rgba(52, 211, 153, 0.1);
+    border: 1px solid rgba(52, 211, 153, 0.25);
+  }
+
+  .status-chip .pip {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #34d399;
+    box-shadow: 0 0 6px #34d399;
+  }
+
+  .profile-name {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    margin-bottom: 0.4rem;
+  }
+
+  .profile-role {
+    font-family: var(--font-mono);
+    color: var(--accent-cyan);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .profile-bio-paragraphs p {
+    margin-bottom: 1.15rem;
+    font-size: 1.025rem;
+    line-height: 1.75;
+  }
+
+  .profile-quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  /* Skills Grid */
+  .skills-categories-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .skills-categories-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .skill-category-card {
+    padding: 2rem;
+    border-radius: var(--radius-md);
+  }
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .category-icon-glyph {
+    color: var(--accent-cyan);
+  }
+
+  .category-title {
+    font-size: 1.15rem;
+  }
+
+  .skill-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .skill-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .skill-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .skill-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #e2e8f0;
+  }
+
+  .skill-note {
+    font-size: 0.785rem;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+  }
+
+  /* Twin Feature Cards */
+  .twin-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .twin-cards-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .feature-card {
+    padding: 2.25rem 2rem;
+    border-radius: var(--radius-md);
+  }
+
+  .feature-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-icon {
+    font-size: 1.25rem;
+  }
+
+  .bullet-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .bullet-list li {
+    position: relative;
+    padding-left: 1.4rem;
+    color: var(--text-muted);
+    font-size: 0.975rem;
+    line-height: 1.6;
+  }
+
+  .bullet-list li::before {
+    content: "◈";
+    position: absolute;
+    left: 0;
+    color: var(--accent-cyan);
+    font-size: 0.8rem;
+  }
+
+  /* Timeline */
+  .timeline-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .timeline-row {
+    display: grid;
+    grid-template-columns: 80px 30px 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  @media (min-width: 640px) {
+    .timeline-row {
+      grid-template-columns: 120px 30px 1fr;
+    }
+  }
+
+  .timeline-meta {
+    text-align: right;
+    padding-top: 1.5rem;
+  }
+
+  .timeline-year {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-lavender);
+  }
+
+  .timeline-point {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    padding-top: 1.7rem;
+  }
+
+  .point-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent-cyan);
+    box-shadow: 0 0 10px var(--accent-cyan);
+    z-index: 2;
+  }
+
+  .point-line {
+    position: absolute;
+    top: 2.2rem;
+    bottom: -1.5rem;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent-cyan), rgba(143, 101, 226, 0.2));
+  }
+
+  .timeline-card {
+    padding: 1.75rem 1.5rem;
+    border-radius: var(--radius-md);
+  }
+
+  .event-title {
+    font-size: 1.15rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .event-org {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent-cyan);
+    margin-bottom: 0.75rem;
+  }
+
+  .event-desc {
+    font-size: 0.925rem;
+    color: var(--text-muted);
+  }
+
+  @keyframes spinClockwise {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>
